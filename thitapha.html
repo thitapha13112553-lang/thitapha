@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เปิดไพ่ตามใจ | ทำนายไพ่ทาโรต์</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: #f7f0e5;
+      font-family: "Tahoma", sans-serif;
+      background:
+        radial-gradient(ellipse at top, #433653 0%, #211d37 48%, #121221 100%);
+    }
+
+    header {
+      text-align: center;
+      padding: 38px 18px 22px;
+    }
+
+    header small {
+      color: #e5c77f;
+      letter-spacing: 3px;
+    }
+
+    h1 {
+      margin: 12px 0 8px;
+      font-size: clamp(30px, 6vw, 48px);
+      color: #f5dfa9;
+    }
+
+    header p {
+      color: #c4bed0;
+      line-height: 1.8;
+    }
+
+    main {
+      width: min(1100px, 94%);
+      margin: 0 auto 40px;
+      display: grid;
+      grid-template-columns: 270px 1fr;
+      gap: 20px;
+    }
+
+    .panel {
+      padding: 22px;
+      border: 1px solid #ffffff20;
+      border-radius: 18px;
+      background: #211e36dd;
+      box-shadow: 0 15px 40px #0003;
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #f0d38e;
+      font-size: 18px;
+    }
+
+    .topics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .topic, select, input, .restart {
+      border: 1px solid #ffffff25;
+      border-radius: 9px;
+      color: #f7f0e5;
+      background: #302b49;
+      padding: 10px;
+      font: inherit;
+    }
+
+    .topic {
+      cursor: pointer;
+    }
+
+    .topic:hover, .topic.selected {
+      border-color: #e5c77f;
+      color: #f5dfa9;
+      background: #423852;
+    }
+
+    label {
+      display: block;
+      margin: 18px 0 7px;
+      font-size: 14px;
+    }
+
+    input, select {
+      width: 100%;
+      background: #19172a;
+    }
+
+    select option {
+      background: #211e36;
+    }
+
+    .hint {
+      margin: 7px 0 0;
+      color: #aaa3bb;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .restart {
+      width: 100%;
+      margin-top: 20px;
+      border: 0;
+      color: #211a2b;
+      background: linear-gradient(110deg, #efd895, #d5aa68);
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .restart:hover {
+      filter: brightness(1.08);
+    }
+
+    .reading-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+
+    #counter {
+      color: #f0d38e;
+      white-space: nowrap;
+      font-size: 14px;
+    }
+
+    .progress {
+      height: 4px;
+      margin: 15px 0 22px;
+      border-radius: 5px;
+      background: #ffffff20;
+      overflow: hidden;
+    }
+
+    #progressBar {
+      width: 0;
+      height: 100%;
+      background: #e5c77f;
+      transition: width .3s;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+    }
+
+    .slot {
+      min-width: 0;
+      text-align: center;
+    }
+
+    .card {
+      width: 100%;
+      aspect-ratio: 2 / 3;
+      padding: 5px;
+      border: 1px solid #b49b62;
+      border-radius: 10px;
+      color: #efd895;
+      background:
+        radial-gradient(circle, #514365, #29243f 70%);
+      font-size: 30px;
+      cursor: pointer;
+      transition: transform .2s, background .2s;
+    }
+
+    .card:hover:not(:disabled) {
+      transform: translateY(-6px);
+    }
+
+    .card:disabled {
+      cursor: default;
+    }
+
+    .card.opened {
+      color: #fff3d6;
+      background: linear-gradient(150deg, #675471, #332b4a);
+      font-size: 12px;
+    }
+
+    .card .symbol {
+      display: block;
+      margin: 8px 0;
+      font-size: 28px;
+    }
+
+    .position {
+      margin-top: 7px;
+      color: #c4bed0;
+      font-size: 11px;
+    }
+
+    .card-name {
+      min-height: 18px;
+      margin-top: 3px;
+      color: #f0d38e;
+      font-size: 11px;
+    }
+
+    .welcome {
+      padding: 35px 10px;
+      text-align: center;
+      color: #c4bed0;
+      line-height: 1.8;
+    }
+
+    #result {
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid #ffffff20;
+    }
+
+    #result h3 {
+      color: #f0d38e;
+    }
+
+    .summary {
+      padding: 14px;
+      border-left: 3px solid #e5c77f;
+      border-radius: 5px;
+      background: #ffffff0b;
+      line-height: 1.8;
+    }
+
+    .meaning {
+      margin: 10px 0;
+      padding: 12px;
+      border-radius: 10px;
+      background: #ffffff0b;
+      line-height: 1.7;
+    }
+
+    .meaning strong {
+      color: #f0d38e;
+    }
+
+    footer {
+      padding: 0 16px 24px;
+      color: #aaa3bb;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    @media (max-width: 800px) {
+      main { grid-template-columns: 1fr; }
+      .cards { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 430px) {
+      .panel { padding: 16px; }
+      .cards { gap: 8px; }
+      .card { font-size: 24px; }
+      .card .symbol { font-size: 24px; }
+      .reading-top { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <small>✦ YOUR TAROT READING ✦</small>
+    <h1>เปิดไพ่ตามใจ</h1>
+    <p>ตั้งคำถามในใจ เลือกเรื่องที่อยากรู้ แล้วเปิดไพ่ด้วยตัวเอง 6 ใบ</p>
+  </header>
+
+  <main>
+    <aside class="panel">
+      <h2>เลือกหัวข้อทำนาย</h2>
+      <div class="topics" id="topics"></div>
+
+      <label for="birthday">วันเกิด</label>
+      <input type="date" id="birthday">
+      <p class="hint" id="birthdayHint">กรอกวันเกิดเพื่อดูราศีและไพ่ประจำวันเกิด</p>
+
+      <label for="zodiac">ราศี</label>
+      <select id="zodiac">
+        <option value="">เลือกราศี</option>
+        <option>ราศีเมษ</option>
+        <option>ราศีพฤษภ</option>
+        <option>ราศีเมถุน</option>
+        <option>ราศีกรกฎ</option>
+        <option>ราศีสิงห์</option>
+        <option>ราศีกันย์</option>
+        <option>ราศีตุลย์</option>
+        <option>ราศีพิจิก</option>
+        <option>ราศีธนู</option>
+        <option>ราศีมังกร</option>
+        <option>ราศีกุมภ์</option>
+        <option>ราศีมีน</option>
+      </select>
+
+      <button class="restart" id="restart">เริ่มเปิดไพ่ 6 ใบ</button>
+      <p class="hint">เลือกไพ่จากสำรับด้านขวาทีละใบ ไพ่จะไม่ซ้ำกัน</p>
+    </aside>
+
+    <section class="panel">
+      <div class="reading-top">
+        <div>
+          <h2 id="readingTitle">สำรับไพ่รอคุณอยู่</h2>
+          <p class="hint" id="readingHint">เลือกหัวข้อ แล้วกดเริ่มเปิดไพ่</p>
+        </div>
+        <div id="counter">ยังไม่ได้เริ่ม</div>
+      </div>
+
+      <div class="progress"><div id="progressBar"></div></div>
+      <div class="cards" id="cards"></div>
+
+      <div class="welcome" id="welcome">
+        ☾<br>
+        เลือกไพ่ 6 ใบด้วยตัวคุณเอง<br>
+        ค่อย ๆ เลือกใบที่รู้สึกดึงดูดใจ
+      </div>
+
+      <section id="result" hidden>
+        <h3>✦ คำทำนายของคุณ</h3>
+        <div class="summary" id="summary"></div>
+        <div id="meanings"></div>
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    คำทำนายนี้จัดทำเพื่อความบันเทิงและการทบทวนตัวเอง ใช้วิจารณญาณประกอบการตัดสินใจ
+  </footer>
+
+  <script>
+    const topics = [
+      "ภาพรวม", "ความรัก", "การงาน", "การเงิน", "สุขภาพใจ",
+      "การเรียน", "ครอบครัว", "โชคลาภ", "คนโสด", "ความสัมพันธ์",
+      "เส้นทางชีวิต", "คำถามของฉัน"
+    ];
+
+    const positions = [
+      "พลังงานปัจจุบัน", "สิ่งที่ซ่อนอยู่", "สิ่งที่ควรปล่อยวาง",
+      "สิ่งที่ควรใส่ใจ", "แนวทางข้างหน้า", "บทสรุป"
+    ];
+
+    // ไพ่ทาโรต์ชุดใหญ่ 22 ใบ
+    const deck = [
+      { name: "The Fool", symbol: "🪶", meaning: "การเริ่มต้นใหม่กำลังเรียกหา กล้าก้าวออกจากกรอบเดิมและเปิดใจรับประสบการณ์" },
+      { name: "The Magician", symbol: "✦", meaning: "คุณมีความสามารถและเครื่องมือพร้อมแล้ว ลงมือทำและสื่อสารความตั้งใจให้ชัด" },
+      { name: "The High Priestess", symbol: "☽", meaning: "ฟังสัญชาตญาณและสังเกตสิ่งที่ยังไม่ได้พูดออกมา คำตอบอาจอยู่ในความเงียบ" },
+      { name: "The Empress", symbol: "❀", meaning: "การดูแลเอาใจใส่จะทำให้สิ่งที่คุณรักเติบโต ให้เวลากับตัวเองและคนรอบข้าง" },
+      { name: "The Emperor", symbol: "♜", meaning: "วางแผนและกำหนดขอบเขตให้ชัด ความมั่นคงเกิดจากการรับผิดชอบสิ่งที่ควบคุมได้" },
+      { name: "The Hierophant", symbol: "⚿", meaning: "คำแนะนำจากผู้มีประสบการณ์หรือบทเรียนเดิมอาจช่วยเปิดทางให้คุณ" },
+      { name: "The Lovers", symbol: "♡", meaning: "ความสัมพันธ์และการเลือกอย่างจริงใจเป็นหัวใจของเรื่องนี้ ซื่อตรงกับความต้องการของตัวเอง" },
+      { name: "The Chariot", symbol: "☄", meaning: "มุ่งหน้าอย่างมีวินัย กำหนดเป้าหมายให้ชัดแล้วคุณจะผ่านสิ่งที่ท้าทายได้" },
+      { name: "Strength", symbol: "♌", meaning: "ความกล้าหาญที่มาพร้อมความอ่อนโยนจะได้ผลดี อดทนและเมตตากับตัวเอง" },
+      { name: "The Hermit", symbol: "☼", meaning: "ใช้เวลาทบทวนตัวเองสักนิด เพื่อค้นหาความต้องการและคำตอบที่แท้จริง" },
+      { name: "Wheel of Fortune", symbol: "◉", meaning: "จังหวะชีวิตกำลังเปลี่ยน เปิดรับโอกาสใหม่และปรับตัวไปตามสถานการณ์" },
+      { name: "Justice", symbol: "⚖", meaning: "พิจารณาข้อเท็จจริงให้ครบ และตัดสินใจอย่างเป็นธรรมกับทุกฝ่าย" },
+      { name: "The Hanged Man", symbol: "⟡", meaning: "ลองหยุดพักและมองสถานการณ์จากมุมใหม่ คำตอบอาจชัดขึ้นเมื่อไม่เร่งรีบ" },
+      { name: "Death", symbol: "♧", meaning: "การเปลี่ยนผ่านกำลังเกิดขึ้น วางสิ่งที่หมดเวลาแล้วเพื่อเปิดพื้นที่ให้สิ่งใหม่" },
+      { name: "Temperance", symbol: "⚗", meaning: "ค่อย ๆ ปรับสมดุล ความสม่ำเสมอและการประนีประนอมจะช่วยให้ไปต่อได้" },
+      { name: "The Devil", symbol: "⛓", meaning: "ลองสังเกตความกลัวหรือความเคยชินที่กำลังรั้งคุณไว้ คุณยังมีสิทธิ์เลือกทางใหม่" },
+      { name: "The Tower", symbol: "ϟ", meaning: "ความจริงบางอย่างอาจปรากฏขึ้น ใช้โอกาสนี้สร้างพื้นฐานที่มั่นคงกว่าเดิม" },
+      { name: "The Star", symbol: "✧", meaning: "ความหวังและการเยียวยากำลังกลับมา ดูแลใจและให้เวลาตัวเองฟื้นพลัง" },
+      { name: "The Moon", symbol: "☾", meaning: "สถานการณ์ยังไม่ชัดทั้งหมด อย่าเพิ่งด่วนสรุป รอข้อมูลและความรู้สึกให้ตกผลึก" },
+      { name: "The Sun", symbol: "☀", meaning: "ความชัดเจนและพลังบวกกำลังส่องทาง มองเห็นความสำเร็จเล็ก ๆ ที่เกิดขึ้นแล้ว" },
+      { name: "Judgement", symbol: "♬", meaning: "ทบทวนสิ่งที่ผ่านมา เรียนรู้จากมัน แล้วตอบรับสิ่งที่มีความหมายกับคุณ" },
+      { name: "The World", symbol: "◎", meaning: "วงจรสำคัญกำลังสมบูรณ์ ชื่นชมสิ่งที่ทำสำเร็จและเตรียมพร้อมสำหรับบทต่อไป" }
+    ];
+
+    let selectedTopic = "ภาพรวม";
+    let openedCards = [];
+    let active = false;
+
+    const topicsEl = document.getElementById("topics");
+
+    topics.forEach(topic => {
+      const button = document.createElement("button");
+      button.className = "topic" + (topic === selectedTopic ? " selected" : "");
+      button.textContent = topic;
+      button.onclick = () => {
+        selectedTopic = topic;
+        document.querySelectorAll(".topic").forEach(b => b.classList.remove("selected"));
+        button.classList.add("selected");
+        updateTitle();
+      };
+      topicsEl.appendChild(button);
+    });
+
+    function updateTitle() {
+      document.getElementById("readingTitle").textContent =
+        active ? "คำทำนายเรื่อง" + selectedTopic : "สำรับไพ่รอคุณอยู่";
+    }
+
+    function getZodiac(dateValue) {
+      if (!dateValue) return "";
+      const date = new Date(dateValue + "T12:00:00");
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+
+      if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return "ราศีเมษ";
+      if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return "ราศีพฤษภ";
+      if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return "ราศีเมถุน";
+      if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return "ราศีกรกฎ";
+      if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return "ราศีสิงห์";
+      if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return "ราศีกันย์";
+      if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return "ราศีตุลย์";
+      if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return "ราศีพิจิก";
+      if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return "ราศีธนู";
+      if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return "ราศีมังกร";
+      if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return "ราศีกุมภ์";
+      return "ราศีมีน";
+    }
+
+    document.getElementById("birthday").addEventListener("change", event => {
+      const sign = getZodiac(event.target.value);
+      if (sign) {
+        document.getElementById("zodiac").value = sign;
+        document.getElementById("birthdayHint").textContent =
+          "วันเกิดของคุณอยู่ใน" + sign;
+      }
+    });
+
+    document.getElementById("restart").onclick = () => {
+      openedCards = [];
+      active = true;
+
+      document.getElementById("result").hidden = true;
+      document.getElementById("welcome").hidden = true;
+      document.getElementById("cards").innerHTML = "";
+      document.getElementById("progressBar").style.width = "0%";
+      document.getElementById("counter").textContent = "เปิดแล้ว 0 / 6";
+      document.getElementById("readingHint").textContent =
+        "เลือกไพ่ที่รู้สึกเชื่อมโยงทีละใบ";
+
+      const birthday = document.getElementById("birthday").value;
+      const sign = birthday
+        ? getZodiac(birthday)
+        : document.getElementById("zodiac").value;
+
+      if (sign) {
+        document.getElementById("readingHint").textContent =
+          "พลังของ" + sign + " · แตะไพ่ที่รู้สึกเชื่อมโยง";
+      }
+
+      updateTitle();
+
+      for (let i = 0; i < 6; i++) {
+        const slot = document.createElement("div");
+        slot.className = "slot";
+        slot.innerHTML = `
+          <button class="card" aria-label="เปิดไพ่ตำแหน่งที่ ${i + 1}">☾</button>
+          <div class="position">${positions[i]}</div>
+          <div class="card-name">แตะเพื่อเปิดไพ่</div>
+        `;
+
+        slot.querySelector(".card").onclick = () => openCard(i, slot);
+        document.getElementById("cards").appendChild(slot);
+      }
+    };
+
+    function openCard(position, slot) {
+      if (openedCards[position]) return;
+
+      const remaining = deck.filter(card =>
+        !openedCards.some(opened => opened.name === card.name)
+      );
+      const card = remaining[Math.floor(Math.random() * remaining.length)];
+      const reversed = Math.random() < 0.25;
+
+      openedCards[position] = { ...card, reversed };
+
+      const button = slot.querySelector(".card");
+      button.disabled = true;
+      button.classList.add("opened");
+      button.innerHTML = `
+        <span class="symbol">${card.symbol}</span>
+        <span>${card.name}</span>
+      `;
+
+      slot.querySelector(".card-name").textContent =
+        card.name + (reversed ? " · กลับหัว" : "");
+
+      const count = openedCards.filter(Boolean).length;
+      document.getElementById("counter").textContent = `เปิดแล้ว ${count} / 6`;
+      document.getElementById("progressBar").style.width = `${count / 6 * 100}%`;
+
+      if (count === 6) showReading();
+    }
+
+    function showReading() {
+      document.getElementById("counter").textContent = "เปิดครบ 6 ใบแล้ว";
+      document.getElementById("result").hidden = false;
+
+      const sign = document.getElementById("zodiac").value;
+      const signText = sign ? ` พลังของ${sign}ชวนให้คุณ` : "";
+
+      document.getElementById("summary").textContent =
+        `${signText} ช่วงนี้คุณกำลังทำความเข้าใจเรื่อง${selectedTopic} ` +
+        `ไพ่ทั้ง 6 ใบชวนให้คุณสังเกตพลังงานปัจจุบันและเลือกก้าวต่อไปอย่างรอบคอบ ` +
+        `คำทำนายเป็นแนวทางสำหรับทบทวนตัวเอง ไม่ใช่คำตัดสินที่เปลี่ยนแปลงไม่ได้`;
+
+      const meanings = document.getElementById("meanings");
+      meanings.innerHTML = "";
+
+      openedCards.forEach((card, index) => {
+        const item = document.createElement("div");
+        item.className = "meaning";
+
+        const meaning = card.reversed
+          ? "ไพ่กลับหัว: พลังของไพ่ใบนี้อาจยังติดขัดหรือแสดงออกได้ไม่เต็มที่ — " + card.meaning
+          : card.meaning;
+
+        item.innerHTML =
+          `<strong>${index + 1}. ${positions[index]} — ${card.name}` +
+          `${card.reversed ? " (กลับหัว)" : ""}</strong><br>${meaning}`;
+
+        meanings.appendChild(item);
+      });
+
+      document.getElementById("result").scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+      });
+    }
+  </script>
+</body>
+</html>
